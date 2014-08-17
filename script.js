@@ -1,6 +1,6 @@
 ymaps.ready(init);
 
-var myMap, myPlacemark, myCircle, radius = 800, sort = 0, coord = getCoordinatesFromAddress();
+var myMap, myPlacemark, myCircle, radius = 800, sort = 0, coord = getCoordinatesFromAddress(), inProgress = false, offset = 0;
 
 function init(){
 	getCoordinatesFromAddress();
@@ -111,14 +111,15 @@ function init(){
 	}, myPlacemark);
 
 	myButton.events.add('press', function () {
-	      getPhotos();
+		offset = 0;
+	    getPhotos();
 	    }
-	  );
+	);
 
 	myListBoxSort.events.add('click', function(e) {
 		sort = e.get('target').data.get('sort');
-		console.log(sort);
-		if(sort == undefined	) return;
+		if(sort == undefined) return;
+		offset = 0;
 		getPhotos();
 	})
 
@@ -128,7 +129,6 @@ function init(){
 		myMap.geoObjects.remove(myCircle);
 		myCircle = new ymaps.Circle([coord, radius]);
 		myMap.geoObjects.add(myCircle);
-		console.log(radius);
 	})
 
 	myMap.geoObjects.add(myPlacemark);
@@ -139,13 +139,17 @@ function init(){
 
 
 function getPhotos() {
-	var url = "https://api.vk.com/method/photos.search?lat="+coord[0] + "&long=" + coord[1] + "&count=100&radius="+radius+"&sort="+sort+"&v=5.24"
-	$(".block_photos").text("");
+	var url = "https://api.vk.com/method/photos.search?lat="+coord[0] + "&long=" + coord[1] + "&count=100&offset="+offset+"&radius="+radius+"&sort="+sort+"&v=5.24"
+	if(offset == 0) $(".block_photos").text("");
 	$.ajax({
 	    url : url,
 	    type : "GET",
+	    beforeSend: function () {
+	    	inProgress = true;
+	    },
 	    dataType : "jsonp",
 	    success : function(data){
+	    	console.debug(data);
 	    	var photos = data.response.items;
 			if(data.response.count == 0 || data.error) {
 				$(".block_photos").text("Фотографий в данном месте не найдено, попробуйте увеличить радиус поиска.");
@@ -155,6 +159,7 @@ function getPhotos() {
 				$(".block_photos").append("<a href='http://vk.com/photo"+photos[i].owner_id+"_" + photos[i].id + "' target='_blank'><div id='photo'>"+
 					"<img src='"+ photos[i].photo_604 + "' height='130' /></div></a>");
 			}
+			inProgress = false;
 	    }
 	});
 }
@@ -167,3 +172,12 @@ function getCoordinatesFromAddress() {
 	else  adressCoord = eval("[" +requestString + "]");
 	return adressCoord;
 }
+
+
+$(window).scroll(function() {
+	if($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !inProgress) {
+		if(offset > 2900) return;
+		offset += 100;
+		getPhotos();
+	}
+});
