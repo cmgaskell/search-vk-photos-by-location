@@ -116,13 +116,6 @@ function init(){
 
 	myListBoxSort.events.add('click', function(e) {
 		sort = e.get('target').data.get('sort');
-		offset = 0;
-	    getPhotos();
-	    }
-	);
-
-	myListBoxSort.events.add('click', function(e) {
-		sort = e.get('target').data.get('sort');
 		if(sort == undefined) return;
 		offset = 0;
 		getPhotos();
