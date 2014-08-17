@@ -122,8 +122,9 @@ function init(){
 	})
 
 	myListBoxRadius.events.add('click', function(e) {
-		radius = e.get('target').data.get('radius');
-		if(!radius) return;
+		now_radius = e.get('target').data.get('radius');
+		if(!now_radius) return;
+		radius = now_radius;
 		myMap.geoObjects.remove(myCircle);
 		myCircle = new ymaps.Circle([coord, radius]);
 		myMap.geoObjects.add(myCircle);
