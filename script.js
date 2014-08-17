@@ -14,8 +14,7 @@ function init(){
     		//'searchControl', 
     		'zoomControl'
     		]
-    }),
-
+    });
 
     myPlacemark = new ymaps.Placemark(coord, {}, {draggable: true});
  	myCircle = new ymaps.Circle([coord, radius]);
@@ -26,15 +25,6 @@ function init(){
 	        content: 'Радиус поиска'
 	    },
 	    items: [
-            new ymaps.control.ListBoxItem({
-                data: {
-                    content: '10 м',
-                    radius: 10
-                },
-                options: {
-                	selectOnClick: false
-                }
-            }),
             new ymaps.control.ListBoxItem({
                 data: {
                     content: '100 м',
@@ -127,7 +117,9 @@ function init(){
 
 	myListBoxSort.events.add('click', function(e) {
 		sort = e.get('target').data.get('sort');
-		console.log(e.get('target'));
+		console.log(sort);
+		if(sort == undefined	) return;
+		getPhotos();
 	})
 
 	myListBoxRadius.events.add('click', function(e) {
