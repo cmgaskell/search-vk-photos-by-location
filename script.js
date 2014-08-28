@@ -116,8 +116,9 @@ function init(){
     );
 
   myListBoxSort.events.add('click', function(e) {
-    sort = e.get('target').data.get('sort');
-    if(sort == undefined) return;
+    var theSort = e.get('target').data.get('sort');
+    if(theSort == undefined) return;
+    sort = theSort;
     offset = 0, first_date = true;
     getPhotos();
   })
