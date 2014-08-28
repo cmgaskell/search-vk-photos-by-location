@@ -110,6 +110,7 @@ function init(){
 	}, myPlacemark);
 
 	myButton.events.add('press', function () {
+	      offset = 0, first_date = true;
 	      getPhotos();
 	    }
 	  );
@@ -117,7 +118,7 @@ function init(){
 	myListBoxSort.events.add('click', function(e) {
 		sort = e.get('target').data.get('sort');
 		if(sort == undefined) return;
-		offset = 0;
+		offset = 0, first_date = true;
 		getPhotos();
 	})
 
@@ -136,9 +137,11 @@ function init(){
 	myMap.controls.add(myButton);
 }
 
+var today = new Date().toDateString(), first_date = true;
 
 function getPhotos() {
-	var url = "https://api.vk.com/method/photos.search?lat="+coord[0] + "&long=" + coord[1] + "&count=100&offset="+offset+"&radius="+radius+"&sort="+sort+"&v=5.24"
+	var url = "https://api.vk.com/method/photos.search?lat="+coord[0] + "&long=" + coord[1] + "&count=100&offset="+offset+"&radius="+radius+"&sort="+sort+"&v=5.24";
+	var current_date = today;
 	if(offset == 0) $(".block_photos").text("");
 	$.ajax({
 	    url : url,
@@ -150,19 +153,33 @@ function getPhotos() {
 	    success : function(data){
 	    	console.debug(data);
 	    	var photos = data.response.items;
-			if(data.response.count == 0 || data.error) {
-				$(".block_photos").text("Фотографий в данном месте не найдено, попробуйте увеличить радиус поиска.");
-				return;
-			}
-			for(var i in photos) {
-				$(".block_photos").append("<a href='http://vk.com/photo"+photos[i].owner_id+"_" + photos[i].id + "' target='_blank'><div id='photo'>"+
-					"<img src='"+ photos[i].photo_604 + "' height='130' /></div></a>");
-			}
-			inProgress = false;
+  			if(data.response.count == 0 || data.error) {
+  				$(".block_photos").text("Фотографий в данном месте не найдено, попробуйте увеличить радиус поиска.");
+  				return;
+  			}
+  			for(var i in photos) {
+  			  var date = unixToDate(photos[i].date);
+  			  if(today == date && first_date) {
+  			    $(".block_photos").append("<p>" + date + "</p>");
+  			    first_date = false;
+  			  }
+  			  if(current_date != date) {
+  			    current_date = date;
+  			    $(".block_photos").append("<p>" + date + "</p>");
+            first_date = true;
+  			  } 
+  				$(".block_photos").append("<a href='http://vk.com/photo"+photos[i].owner_id+"_" + photos[i].id + "' target='_blank'><div id='photo'>"+
+  					"<img src='"+ photos[i].photo_604 + "' height='130'  title='"+date+"' /></div></a>");
+  			}
+  			inProgress = false;
 	    }
 	});
 }
 
+function unixToDate(date) {
+  var theDate = new Date(date * 1000).toDateString();
+  return theDate;
+}
 function getCoordinatesFromAddress() {
 	var adressCoord;
 	var addressLength = document.location.href.lastIndexOf("#");

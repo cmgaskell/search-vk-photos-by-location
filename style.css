@@ -1,10 +1,18 @@
+@import"//fonts.googleapis.com/css?family=RobotoDraft:400,300";
+
+
 html, body {
-	background-color: #fff;
+	background-color: #fafafa;
 	margin:2px;
 	padding: 0px;
 	height: 100%;
 }
 
+body {
+	font-family: "RobotoDraft",sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+}
 img {
 	-webkit-transition-duration: 0.5s; 
 	-moz-transition-duration: 0.5s;
@@ -28,3 +36,8 @@ img:hover {
 	margin: 5px;
 }
 
+p {
+	color: #6c6c6c;
+	font-size: 1.429em;
+	margin: 10px 3px;
+} 
