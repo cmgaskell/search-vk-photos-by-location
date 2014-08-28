@@ -1,7 +1,6 @@
 ymaps.ready(init);
 
 var myMap, myPlacemark, myCircle, radius = 800, sort = 0, coord = getCoordinatesFromAddress(), inProgress = false, offset = 0;
-
 function init(){
 	getCoordinatesFromAddress();
 	getPhotos();
@@ -14,7 +13,7 @@ function init(){
     		//'searchControl', 
     		'zoomControl'
     		]
-    });
+    })
 
     myPlacemark = new ymaps.Placemark(coord, {}, {draggable: true});
  	myCircle = new ymaps.Circle([coord, radius]);
@@ -111,10 +110,9 @@ function init(){
 	}, myPlacemark);
 
 	myButton.events.add('press', function () {
-		offset = 0;
-	    getPhotos();
+	      getPhotos();
 	    }
-	);
+	  );
 
 	myListBoxSort.events.add('click', function(e) {
 		sort = e.get('target').data.get('sort');
@@ -124,8 +122,9 @@ function init(){
 	})
 
 	myListBoxRadius.events.add('click', function(e) {
-		radius = e.get('target').data.get('radius');
-		if(!radius) return;
+		now_radius = e.get('target').data.get('radius');
+		if(!now_radius) return;
+		radius = now_radius;
 		myMap.geoObjects.remove(myCircle);
 		myCircle = new ymaps.Circle([coord, radius]);
 		myMap.geoObjects.add(myCircle);
@@ -172,7 +171,6 @@ function getCoordinatesFromAddress() {
 	else  adressCoord = eval("[" +requestString + "]");
 	return adressCoord;
 }
-
 
 $(window).scroll(function() {
 	if($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !inProgress) {
