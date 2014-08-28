@@ -23,18 +23,8 @@ img:hover {
 }
 
 #photo {
-	position: inherit;
-	float:left;
-	min-width: 130px;
-	height: 130px;
-	margin:5px;
-	text-align: center;
+  display: inline-block;
 	background-color: #f5f5f5;
-	margin: 15px;
+	margin: 5px;
 }
-
-.block_photos {
-	position: static;
-}
-
 
