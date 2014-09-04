@@ -119,18 +119,18 @@ function init(){
     var theSort = e.get('target').data.get('sort');
     if(theSort == undefined || theSort == sort) return;
     sort = theSort;
-    offset = 0, first_date = true;
+    offset = 0;
     getPhotos();
   })
 
   myListBoxRadius.events.add('click', function(e) {
-    theRadius = e.get('target').data.get('radius');
+    var theRadius = e.get('target').data.get('radius');
     if(!theRadius || theRadius == radius) return;
     radius = theRadius;
+    getPhotos();
     myMap.geoObjects.remove(myCircle);
     myCircle = new ymaps.Circle([coord, radius]);
     myMap.geoObjects.add(myCircle);
-    getPhotos();
   })
 
   myMap.geoObjects.add(myPlacemark);
@@ -139,12 +139,16 @@ function init(){
   myMap.controls.add(myButton);
 }
 
-var today = new Date().toDateString(), first_date = true;
+var today = dateOnRussian(new Date());
+var current_date = today;
 
 function getPhotos() {
   var url = "https://api.vk.com/method/photos.search?lat="+coord[0] + "&long=" + coord[1] + "&count=100&offset="+offset+"&radius="+radius+"&sort="+sort+"&v=5.24";
-  var current_date = today;
-  if(offset == 0) $(".block_photos").text("");
+  if(offset == 0) {
+    $(".block_photos").text("");
+    var first_date = true;
+    current_date = today; 
+  }
   $.ajax({
       url : url,
       type : "GET",
@@ -159,29 +163,39 @@ function getPhotos() {
           $(".block_photos").text("Фотографий в данном месте не найдено, попробуйте увеличить радиус поиска.");
           return;
         }
+
         for(var i in photos) {
           var date = unixToDate(photos[i].date);
           if(today == date && first_date) {
-            $(".block_photos").append("<p>" + date + "</p>");
+            $(".block_photos").append("<p>Сегодня</p>");
             first_date = false;
           }
           if(current_date != date) {
             current_date = date;
             $(".block_photos").append("<p>" + date + "</p>");            
-            first_date = true;
           } 
           $(".block_photos").append("<a href='http://vk.com/photo"+photos[i].owner_id+"_" + photos[i].id + "' target='_blank'><div id='photo'>"+
             "<img src='"+ photos[i].photo_604 + "' height='130'  title='"+date+"' /></div></a>");
         }
+
         inProgress = false;
       }
   });
 }
 
 function unixToDate(date) {
-  var theDate = new Date(date * 1000).toDateString();
-  return theDate;
+  var theDate = new Date(date * 1000);
+  return dateOnRussian(theDate);
 }
+
+function dateOnRussian(date) {
+  var today = date;
+  var day = today.getDay();
+  var monthA = 'января,февраля,марта,апреля,мая,июня,июля,авгста,сентября,октября,ноября,декабря'.split(',');
+  var mounth = monthA[today.getMonth()];
+  return(day + " " + mounth);
+}
+
 function getCoordinatesFromAddress() {
   var adressCoord;
   var addressLength = document.location.href.lastIndexOf("#");
