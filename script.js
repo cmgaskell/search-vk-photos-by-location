@@ -117,19 +117,20 @@ function init(){
 
   myListBoxSort.events.add('click', function(e) {
     var theSort = e.get('target').data.get('sort');
-    if(theSort == undefined) return;
+    if(theSort == undefined || theSort == sort) return;
     sort = theSort;
     offset = 0, first_date = true;
     getPhotos();
   })
 
   myListBoxRadius.events.add('click', function(e) {
-    now_radius = e.get('target').data.get('radius');
-    if(!now_radius) return;
-    radius = now_radius;
+    theRadius = e.get('target').data.get('radius');
+    if(!theRadius || theRadius == radius) return;
+    radius = theRadius;
     myMap.geoObjects.remove(myCircle);
     myCircle = new ymaps.Circle([coord, radius]);
     myMap.geoObjects.add(myCircle);
+    getPhotos();
   })
 
   myMap.geoObjects.add(myPlacemark);
