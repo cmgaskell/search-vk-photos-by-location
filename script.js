@@ -167,12 +167,12 @@ function getPhotos() {
         for(var i in photos) {
           var date = unixToDate(photos[i].date);
           if(today == date && first_date) {
-            $(".block_photos").append("<p>Сегодня</p>");
+            $(".block_photos").append("<div class='page-divider'><div class='page-divider__text'>Сегодня</div></div>");
             first_date = false;
           }
           if(current_date != date) {
             current_date = date;
-            $(".block_photos").append("<p>" + date + "</p>");            
+            $(".block_photos").append("<div class='page-divider'><div class='page-divider__text'>" + date + "</div></div>");            
           } 
           $(".block_photos").append("<a href='http://vk.com/photo"+photos[i].owner_id+"_" + photos[i].id + "' target='_blank'><div id='photo'>"+
             "<img src='"+ photos[i].photo_604 + "' height='130'  title='"+date+"' /></div></a>");
